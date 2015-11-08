@@ -1,7 +1,7 @@
 {
   "name": "checkerboard-demo",
   "version": "0.0.1",
-  "description": "Demos for Checkerboard: shared transactional memory with zero server-side logic.",
+  "description": "Demos for Checkerboard: shared transactional memory with zero server-side configuration.",
   "author": "Gregory Fabry <glfabry2@illinois.edu>",
   "main": "demo-server.js",
   "repository": {
