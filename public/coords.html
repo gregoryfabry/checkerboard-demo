@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<style>
+body {height: 100vh}
+</style>
+<script src="/node_modules/checkerboard/build/out.js"></script>
+<script>
+
+window.addEventListener('load', function() {
+  var stm = new checkerboard.STM('ws://' + document.location.hostname + ':9998');
+  
+  stm.action('change-coords')
+    .onReceive(function(x, y) {
+      this.x = x;
+      this.y = y;
+    });
+    
+  stm.init(function(store) {
+    store.addObserver(function(newValue, oldValue) {
+      if (oldValue !== null)
+        console.log("Coords changed from " + JSON.stringify(oldValue) + " to " + JSON.stringify(newValue));
+      else
+        console.log("Coords are set at " + JSON.stringify(newValue));
+    });
+
+    document.body.addEventListener('click', function(e) {
+      store.sendAction('change-coords', e.pageX, e.pageY);
+    });
+  });
+});
+</script>
