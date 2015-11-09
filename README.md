@@ -6,9 +6,9 @@ Demos for the Checkerboard framework ([GitHub](https://github.com/gregoryfabry/c
 
     node demo-server
     
-Go to http://*server*:9999/public/*demo*.html; e.g. http://localhost:9999/whiteboard.html.
+Go to http://*server*:9999/demos/*demo*.html; e.g. http://localhost:9999/demos/whiteboard.html.
 
-Open in multiple tabs or multiple devices to see the synchronization effect.
+Open in multiple tabs or multiple devices to see the synchronization effect. Restart the server to clear the store.
 
 ## coords
 
@@ -17,6 +17,10 @@ Open the console on all devices. Observe what happens when you click on the docu
 ## whiteboard
 
 A simple whiteboard. Observe how drawings stay when you refresh the page.
+
+## whiteboard-mt
+
+A multitouch version of whiteboard.
 
 ## atm
 

@@ -9,18 +9,13 @@ body {margin: 0; padding: 0; height: 100vh}
 <script>
   window.addEventListener('load', function() {
     var canvas = document.getElementById('whiteboard');
-    
-    canvas.width = document.body.clientWidth;
-    canvas.height = document.body.clientHeight;
-    
     var ctx = canvas.getContext('2d');
-    ctx.strokeStyle = '#ff0000';
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = 5;
-    
+
+    resize();
+        
     var stm = new checkerboard.STM('ws://' + document.location.hostname + ':9998');
     
-    var curPath;
+    var curPath = null;
     stm.action('init')
       .onReceive(function() {
         if (typeof this.paths === 'undefined')
@@ -34,9 +29,7 @@ body {margin: 0; padding: 0; height: 100vh}
     
     stm.action('add-point')
       .onReceive(function(x, y) {
-        if (curPath) {
-          this.paths[curPath][this.paths[curPath].length] = {'x':x, 'y':y};
-        }
+        this[this.length] = {'x':x, 'y':y};
       });
       
     stm.action('end-path')
@@ -49,15 +42,20 @@ body {margin: 0; padding: 0; height: 100vh}
       
       canvas.addEventListener('mousedown', function(e) {
         store.sendAction('create-path');
-        store.sendAction('add-point', e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+        store.paths[curPath].sendAction('add-point', e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
       });
       
       canvas.addEventListener('mousemove', function(e) {
-        store.sendAction('add-point', e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+        if (curPath !== null)
+          store.paths[curPath].sendAction('add-point', e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
       });
       
       canvas.addEventListener('mouseup', store.sendAction.bind(store, 'end-path'));
       canvas.addEventListener('mouseleave', store.sendAction.bind(store, 'end-path'));
+      
+      window.addEventListener('resize', function() {
+        resize(store.paths);
+      });
       
       store.paths.addObserver(function(newValue, oldValue) {
         for (var i = 0; i < newValue.length; i++)
@@ -77,6 +75,19 @@ body {margin: 0; padding: 0; height: 100vh}
         ctx.closePath();
         ctx.stroke();
       }
+    }
+    
+    function resize(paths) {
+      canvas.width = document.body.clientWidth;
+      canvas.height = document.body.clientHeight;
+      
+      ctx.strokeStyle = '#ff0000';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 5;
+      
+      if (typeof paths !== 'undefined')
+        for (var i = 0; i < paths.length; i++)
+          drawPath(paths[i]);
     }
   });
 </script>
